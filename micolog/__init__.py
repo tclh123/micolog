@@ -50,7 +50,6 @@ micolog_app = webapp2.WSGIApplication(
                 ('/tinymce/(.*)', zipserve.make_zip_handler('tinymce.zip')),
                 ('/media/([^/]*)/{0,1}.*',blog.getMedia),
                 ('/checkimg/', blog.CheckImg),
-                #('/checkimg2/', blog.CheckImg2),
                 ('/checkcode/', blog.CheckCode),
                 ('/skin',blog.ChangeTheme),
                 ('/feed', blog.FeedHandler),

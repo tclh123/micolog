@@ -135,7 +135,6 @@ class SinglePost(BasePublicPage):
 
     #@request_memcache(key_prefix='single_post')
     def get(self,slug=None,postid=None):
-        logging.error("SinglePost %s" % postid)
         entries=[]
         if postid:
             entry=Entry.get_by_id(long(postid))
@@ -688,8 +687,6 @@ class do_action(BasePublicPage):
         def get_comments(self,key):
             entry=Entry.get(key)
             comments,cursor,more=Comment.query().filter(Comment.entry ==entry.key).order(-Comment.date).fetch_page(10)
-
-            logging.error(comments)
 
             vals= dict(entry=entry, comments=comments,cursor=more and cursor.to_websafe_string() or '',more=more)
             html=self.get_render('comments',vals)
