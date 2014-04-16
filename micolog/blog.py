@@ -12,6 +12,7 @@ from django.utils import simplejson
 from google.appengine.api import users
 from app.safecode import Image
 from app.gmemsess import Session
+from app.captcha import create_validate_code
 from base import *
 from utils import *
 from model import *
@@ -68,8 +69,7 @@ class MainPage(BasePublicPage):
 
 
     @request_memcache(key_prefix='HomePage', is_entry=True)
-    def get(self):
-
+    def get(self,page=1):
         try:
             sPrev=self.param('prev')
             sNext=self.param('next')
@@ -77,15 +77,28 @@ class MainPage(BasePublicPage):
             sPrev=''
             sNext=''
 
+        entrycount = self.blog.postscount()
+        max_page = entrycount / self.blog.posts_per_page + ( entrycount % self.blog.posts_per_page and 1 or 0 )
 
         orders= datastore_query.CompositeOrder([-Entry.sticky,-Entry.date])
         entries = Entry.query().filter(Entry.entrytype=='post',Entry.published==True)
 
         entries,links=Pager(query=entries,items_per_page=self.blog.posts_per_page).fetch_cursor(sNext,sPrev,orders)
 
-        return self.render('index',
-            dict(entries=entries, pager=links))
-
+        show_prev = links['prev'] and True or False
+        show_next = links['next'] and True or False
+        #return self.render('index',
+        #    dict(entries=entries, pager=links))
+        return self.render('index', {'entries': entries,
+                                     'page': links,
+                                     'show_prev' : show_prev,
+                                     'show_next' : show_next,
+                                     'pageindex':page,
+                                     'ishome':True,
+                                     'pagecount':max_page,
+                                     'postscount':entrycount
+                                    })
+            
 class OtherHandler(BasePublicPage):
     def  get(self,slug=None,postid=None):
         pass
@@ -122,7 +135,7 @@ class SinglePost(BasePublicPage):
 
     #@request_memcache(key_prefix='single_post')
     def get(self,slug=None,postid=None):
-
+        logging.error("SinglePost %s" % postid)
         entries=[]
         if postid:
             entry=Entry.get_by_id(long(postid))
@@ -219,19 +232,19 @@ class SinglePost(BasePublicPage):
 ##        #wait for half second in case otherside hasn't been published
 ##        time.sleep(0.5)
 ##
-####		#also checking the coming url is valid and contains our link
-####		#this is not standard trackback behavior
-####		try:
+####        #also checking the coming url is valid and contains our link
+####        #this is not standard trackback behavior
+####        try:
 ####
-####			result = urlfetch.fetch(coming_url)
-####			if result.status_code != 200 :
-####				#or ((self.blog.baseurl + '/' + slug) not in result.content.decode('ascii','ignore')):
-####				self.response.out.write(error % "probably spam")
-####				return
-####		except Exception, e:
-####			logging.info("urlfetch error")
-####			self.response.out.write(error % "urlfetch error")
-####			return
+####            result = urlfetch.fetch(coming_url)
+####            if result.status_code != 200 :
+####                #or ((self.blog.baseurl + '/' + slug) not in result.content.decode('ascii','ignore')):
+####                self.response.out.write(error % "probably spam")
+####                return
+####        except Exception, e:
+####            logging.info("urlfetch error")
+####            self.response.out.write(error % "urlfetch error")
+####            return
 ##
 ##        comment = Comment.all().filter("entry =", entry).filter("weburl =", coming_url).get()
 ##        if comment:
@@ -393,7 +406,7 @@ class SitemapHandler(BaseRequestHandler):
         def addurl(loc,lastmod=None,changefreq=None,priority=None):
             url_info = {
                 'location':   loc,
-                'lastmod':	lastmod,
+                'lastmod':  lastmod,
                 'changefreq': changefreq,
                 'priority':   priority
             }
@@ -420,7 +433,7 @@ class SitemapHandler(BaseRequestHandler):
                 addurl(loc,None,'weekly',0.5)
 
 
-##		self.response.headers['Content-Type'] = 'application/atom+xml'
+##      self.response.headers['Content-Type'] = 'application/atom+xml'
         self.render2('views/sitemap.xml',{'urlset':urls})
 
 
@@ -434,16 +447,17 @@ class Post_comment(BaseRequestHandler):
     def post(self,slug=None):
         useajax=self.param('useajax')=='1'
         ismobile=self.paramint('ismobile')==1
-        if not self.is_login:
-            if useajax:
-                    self.write(simplejson.dumps((False,-102,_('You must login before comment.')),ensure_ascii = False))
-            else:
-                    self.error(-102,_('You must login before comment .'))
-            return
+        #if not self.is_login:
+        #    if useajax:
+        #            self.write(simplejson.dumps((False,-102,_('You must login before comment.')),ensure_ascii = False))
+        #    else:
+        #            self.error(-102,_('You must login before comment .'))
+        #    return
 
-
-        name=self.login_user.nickname()
-        email=self.login_user.email()
+        #name=self.login_user.nickname()
+        #email=self.login_user.email()
+        name=self.param('author')
+        email=self.param('email')
         url=self.param('url')
 
         key=self.param('key')
@@ -458,7 +472,7 @@ class Post_comment(BaseRequestHandler):
 
         if not (name and email and content):
             if useajax:
-                        self.write(simplejson.dumps((False,-101,_('Please input comment .'))))
+                self.write(simplejson.dumps((False,-101,_('Please input comment .'))))
             else:
                 self.error(-101,_('Please input comment .'))
         else:
@@ -474,7 +488,6 @@ class Post_comment(BaseRequestHandler):
                     comment.weburl=url
                 except:
                     comment.weburl=None
-
 
             comment.ip=self.request.remote_addr
 
@@ -629,9 +642,7 @@ class ChangeTheme(BaseRequestHandler):
 
 class do_action(BasePublicPage):
     def get(self,slug=None):
-
         try:
-
             func=getattr(self,'action_'+slug)
             if func and callable(func):
                 func()
@@ -671,7 +682,6 @@ class do_action(BasePublicPage):
             self.response.out.write(result.content)
         return
 
-
     def action_getcomments(self):
         key=self.param('key')
         @request_memcache(key_prefix='',comment_entry_key=key,time=3600*24)
@@ -679,13 +689,14 @@ class do_action(BasePublicPage):
             entry=Entry.get(key)
             comments,cursor,more=Comment.query().filter(Comment.entry ==entry.key).order(-Comment.date).fetch_page(10)
 
-
+            logging.error(comments)
 
             vals= dict(entry=entry, comments=comments,cursor=more and cursor.to_websafe_string() or '',more=more)
             html=self.get_render('comments',vals)
             self.write(html)
         get_comments(self,key)
         #self.write(simplejson.dumps(html.decode('utf8')))
+        
     def action_getcomments_more(self):
         key=self.param('key')
         @request_memcache(key_prefix='',comment_entry_key=key,time=3600*24)
@@ -714,8 +725,6 @@ class do_action(BasePublicPage):
         vals=dict(loginurl=loginurl,useajax=useajax,entry=entry,is_login=self.is_login,key=key)
         self.render('comment_edit',vals)
 
-
-
         #以下代码不会被执行
 
 ##        commentuser=self.request.cookies.get('comment_user', '')
@@ -729,8 +738,8 @@ class do_action(BasePublicPage):
 ##                   user_url=commentuser[2], checknum1=random.randint(1, 10), checknum2=random.randint(1, 10))
 ##        html=self.get_render('comment_edit',vals)
 ##        self.write(html)
-    def action_mobile_more(self):
 
+    def action_mobile_more(self):
         self.render('more',{})
 
     #@request_memcache("action_test")
@@ -773,7 +782,6 @@ class do_action(BasePublicPage):
         ObjCache.flush_all()
 
 
-
 class getMedia(webapp.RequestHandler):
     def get(self,slug):
         media=Media.get(slug)
@@ -787,8 +795,7 @@ class getMedia(webapp.RequestHandler):
                 media.download+=1
                 media.put()
 
-
-
+"""             
 class CheckImg(BaseRequestHandler):
     def get(self):
         img = Image()
@@ -801,7 +808,25 @@ class CheckImg(BaseRequestHandler):
         sess.save()
         self.response.headers['Content-Type'] = "image/png"
         self.response.out.write(imgdata)
+"""
 
+class CheckImg(BaseRequestHandler):
+    def get(self):
+        import StringIO
+        code_img, strs = create_validate_code()  
+        buf = StringIO.StringIO()  
+        code_img.save(buf,'JPEG',quality=70)          
+        imgdata = buf.getvalue()
+        
+        sess=Session(self,timeout=900)
+        if not sess.is_new():
+            sess.invalidate()
+            sess=Session(self,timeout=900)
+        sess['icode']=strs
+        sess.save()
+        
+        self.response.headers['Content-Type'] = "image/jpeg"
+        self.response.out.write(imgdata)
 
 class CheckCode(BaseRequestHandler):
     def get(self):

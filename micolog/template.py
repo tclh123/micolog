@@ -124,7 +124,7 @@ def loadbytheme(theme,template_file, debug=False):
       save_urlnode_render = URLNode.render
       old_settings = _swap_settings(new_settings)
       try:
-        URLNode.render = _urlnode_render_replacement
+        #URLNode.render = _urlnode_render_replacement
         return orig_render(context)
       finally:
         _swap_settings(old_settings)

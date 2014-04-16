@@ -41,7 +41,7 @@ admin_app=webapp2.WSGIApplication(
 
 
 micolog_app = webapp2.WSGIApplication(
-            [
+            [   
                 ('/', blog.MainPage),
                 webapp2.Route('/post/<postid:\d+>', blog.SinglePost),
                 webapp2.Route('/page/<page:\d+>', blog.SinglePost),
@@ -50,6 +50,7 @@ micolog_app = webapp2.WSGIApplication(
                 ('/tinymce/(.*)', zipserve.make_zip_handler('tinymce.zip')),
                 ('/media/([^/]*)/{0,1}.*',blog.getMedia),
                 ('/checkimg/', blog.CheckImg),
+                #('/checkimg2/', blog.CheckImg2),
                 ('/checkcode/', blog.CheckCode),
                 ('/skin',blog.ChangeTheme),
                 ('/feed', blog.FeedHandler),
@@ -64,7 +65,6 @@ micolog_app = webapp2.WSGIApplication(
                 webapp2.Route('/do/<slug:\w+>', blog.do_action),
                 #('/e/(.*)',blog.Other),
                 ('/([\\w\\-\\./%]+)', blog.SinglePost),
-
                 ('.*',blog.Error404)
             ],debug=True)
 

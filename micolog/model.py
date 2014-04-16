@@ -926,7 +926,6 @@ class Comment(BlogModel):
         if not self.blog.owner: return
         comment=self
 
-
         refers = re.findall(r'#comment-(\d+)', comment.content)
         if len(refers)!=0:
             replyIDs=[ndb.Key(Comment,int(a)) for a in refers]
@@ -949,6 +948,13 @@ class Comment(BlogModel):
                         message.body = emailbody
                         message.send()
 
+    @property
+    def entry_title(self):
+        return self.entry.get().title
+        
+    @property
+    def entry_fullurl(self):
+        return self.entry.get().fullurl
 
 #从1.0版本开始，使用Message取代Comment,暂时不使用
 ##MESSAGE_HOLD=0
