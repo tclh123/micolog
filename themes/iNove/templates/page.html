@@ -1,0 +1,67 @@
+﻿{% extends "base.html" %}
+{% block title %} {{entry.title|escape}} - {{blog.title|escape}} {% endblock %}
+
+{% block head_block %}
+{% if entry %}
+{%if entry.strtags%}<meta name="Keywords" content="{{entry.strtags|escape}}">{%endif%}
+{%if entry.excerpt%} <meta name="Description" content="{{entry.excerpt|escape}}">{%endif%}
+{% endif %}
+<script src="/static/js/jquery.form.utf8.js"></script>
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+{% endblock %}
+
+{% block content %}
+  
+<!-- content START -->
+<div id="content">
+
+	<!-- main START -->
+	<div id="main">
+
+
+    <div class="post" id="post-276">
+		<h2>{{ entry.title|escape }}</h2>
+		<div class="info">
+			<span class="addcomment"><a href="#respond">发表评论</a></span>
+			<span class="comments"><a href="#comments">阅读评论</a></span>
+			<div class="fixed"></div>
+		</div>
+		<div class="content">
+			{{ entry.content|safe }}
+			<div class="fixed"></div>
+		</div>
+	</div>
+
+<div id="comments">
+
+<div id="cmtswitcher">
+			<a id="commenttab" class="curtab" >评论 ({{entry.commentcount}})</a>
+			<a id="readtab" class="curtab" >阅读 ({{entry.readtimes}})</a>
+				<span class="addcomment"><a href="#respond">发表评论</a></span>
+
+		<div class="fixed"></div>
+</div>
+
+    <div id="comment_area">
+    </div>
+    
+    <div id="comment_edit" style="margin-top:20px">
+
+    </div>
+
+</div>
+<script>
+  $('#comment_area').load('/do/getcomments?key={{entry.key.id}}');
+  $('#comment_edit').load('/do/getcomment_edit?key={{entry.key.id}}');
+</script>
+
+	</div>
+	<!-- main END -->
+
+	
+{% include "sidebar.html" %}
+    
+	<div class="fixed"></div>
+</div>
+
+{% endblock %}

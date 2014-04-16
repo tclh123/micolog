@@ -1,0 +1,145 @@
+<!-- sidebar START -->
+<div id="sidebar">
+
+<!-- sidebar north START -->
+<div id="northsidebar" class="sidebar">
+	<!-- feeds -->
+	<div class="widget widget_feeds">
+		<div class="content">
+			<div id="subscribe">
+				<a rel="external nofollow" id="feedrss" title="订阅这个博客的文章" href="{{ blog.feedurl }}"><abbr title="Really Simple Syndication">RSS</abbr> 订阅</a>
+				<a rel="external nofollow" id="feedrss" title="订阅这个博客的评论" href="{{ blog.feedurl }}/comments"><abbr title="Really Simple Syndication">RSS</abbr> 订阅评论</a>
+			</div>
+			<div class="fixed"></div>
+		</div>
+	</div>
+
+	<!-- showcase -->
+	
+	<div id="blog-notice" class="widget widget_blog_notice">		
+    <h3>博客公告</h3>
+    <ul>
+		{{blog.blognotice|safe}}
+	</ul>
+	</div>
+	
+	<div id="recent-posts-2" class="widget widget_recent_entries">		
+    <h3>最近文章</h3>
+    <ul>
+        {% for entry in blog.recentposts %}
+		<li><a href="{{entry.fullurl|escape}}" title="{{entry.title|escape}}">{{entry.title|escape}}({{entry.readtimes}})</a></li>
+        {%endfor%}
+	</ul>
+	</div>
+
+	<div id="hot-posts" class="widget widget_hot_entries">		
+    <h3>热门文章</h3>
+    <ul>
+        {% for entry in blog.hotposts %}
+		<li><a href="{{entry.fullurl|escape}}" title="{{entry.title|escape}}">{{entry.title|escape}}({{entry.readtimes}})</a></li>
+        {%endfor%}
+	</ul>
+	</div>
+
+	<div id="recentcomments" class="widget widget_recentcomments">
+    <h3>最新评论</h3>
+    <ul>
+    {% for comment in blog.recent_comments %}
+        <li class="rc_item"><div class="rc_info"><span class="author_name">
+        {%if comment.weburl %}<a target="_blank" href='{{comment.weburl}}' class='url'  rel='external nofollow'>{{comment.author}}</a>{% else %}{{comment.author}}{%endif%}</span> 发表于 <span class="post_title"><a href="{{comment.entry_fullurl|escape}}#comment-{{comment.key.id}}">{{comment.entry_title|escape}}</a></span></div><div class="rc_excerpt">{{comment.shortcontent}}...</div></li>
+    {%endfor%}
+    </ul>
+    </div>
+</div>
+<!-- sidebar north END -->
+
+<div id="centersidebar">
+
+	<!-- sidebar east START -->
+	<div id="eastsidebar" class="sidebar">
+    	<div id="categories-368151121" class="widget widget_categories">
+        <h3>分类目录</h3>
+        <ul>
+         	{%for cate in blog.categories%}
+            <li class="cat-item cat-item-846"><a href="/category/{{cate.slug}}">{{cate.name}}</a>({{cate.count}})</li>
+            {%endfor%}
+    	</ul>
+        </div>	
+    </div>
+
+	<!-- sidebar east END -->
+
+	<!-- sidebar west START -->
+	<div id="westsidebar" class="sidebar">
+    	<div id="archives-2" class="widget widget_archives">
+		
+		<h3>归档</h3>
+		<ul>
+		{%for archive in blog.archives%}
+		<li><a href="/{{archive.year}}/{{archive.month}}">{{archive.monthyear}}({{archive.entrycount}})</a></li>
+		{%endfor%}
+		</ul>
+		<br/>
+		<h3>快速链接</h3>
+	
+		<ul id="langpref">
+        
+<script>
+
+    function loginp()
+    {
+       $.getJSON("/do/info_login", function(ret){
+              if( ret.islogin)
+              {
+                  html='<li><a href="{{self.logouturl}}">注销</a></li>';
+                if (ret.isadmin)
+                html+=' <li><a href="/admin">管理</a></li>';
+                $('#langpref').html(html);
+
+              }
+              else
+              {$('#langpref').html('<li><a href="/admin">登录</a></li>');}
+       });
+    }
+    loginp();
+</script>
+		</ul>
+	
+	<ul>
+        
+        
+		<li><a href="{{ blog.feedurl }}" title="使用 RSS 2.0 同步此内容">文章 <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+		<li><a rel="nofollow" href="/sitemap">sitemap</a></li>
+    	</ul>
+        </div>	
+    </div>
+	<!-- sidebar west END -->
+	<div class="fixed"></div>
+</div>
+
+<!-- sidebar south START -->
+<div id="southsidebar" class="sidebar">
+   	<div class="widget">
+		<h3>Tags</h3>
+		{% for t in blog.tags %}
+		<a title="{{ t.tagcount }} pages" href="/tag/{{t.tag|urlencode}}"><span style='font-size:{{ t.tagcount|add:9 }}px;'>{{t.tag}}</span></a>
+		{%endfor%}
+	
+	</div>
+
+    <div id="linkcat-2" class="widget widget_links">
+    <h3>友情链接</h3>
+    	<ul class='xoxo blogroll'>
+            {%for link in blog.blogrolls%}
+            <li><a href="{{link.href}}" target="_blank">{{link.linktext}}</a></li>
+            {%endfor%}
+    	</ul>
+    </div>
+</div>
+
+<!-- sidebar south END -->
+
+</script>
+
+</div>
+<!-- sidebar END -->

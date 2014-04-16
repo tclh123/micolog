@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %} {{entry.title|escape}} - {{blog.title|escape}} {% endblock %}
+
+{% block head_block %}
+
+{% if entry %}
+{%if entry.strtags%}<meta name="Keywords" content="{{entry.strtags|escape}}">{%endif%}
+{%if entry.excerpt%} <meta name="Description" content="{{entry.excerpt|escape}}">{%endif%}
+{% endif %}
+
+<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.utf8.js"></script>
+
+
+{% endblock %}
+
+
+{% block content %}
+  
+<!-- content START -->
+<div id="content">
+
+	<!-- main START -->
+	<div id="main">
+
+	<div class="post" id="post-968">
+		<h2>{{ entry.title|escape }}</h2>
+		<div class="info">
+
+			<span class="date">{{ entry.date|datetz:"F jS, Y " }}</span>
+													<span class="addcomment"><a href="#respond">发表评论</a></span>
+				<span class="comments"><a href="#comments">阅读评论</a></span>
+						<div class="fixed"></div>
+		</div>
+		<div class="content">
+			{{ entry.content|safe }}
+			<div class="fixed"></div>
+		</div>
+		<div class="under">
+			<span class="categories">分类: </span><span>
+            {%for cate in entry.categories%} <a href="/category/{{cate.slug}}">{{cate.name}}</a> {%endfor%}
+            </span>	
+            {% if entry.tags%}
+            <span class="tags">标签: </span><span>
+            {%for tag in entry.tags%}
+            <a href="/tag/{{tag|urlencode}}">{{tag}}</a>&nbsp;{%endfor%}</span>
+            {%endif%}
+            </div>
+
+	</div>
+
+	<!-- related posts START -->
+	<div id="related_posts"><h3>相关文章</h3>
+    <ul class="related_post">
+    {%for post in entry.relateposts%}
+                  <li><a href="{{post.fullurl|escape}}">{{post.title|escape}}</a></li>
+    {%endfor%}
+    </ul></div><div class="fixed"></div>	<!-- related posts END -->
+
+<div id="comments">
+
+<div id="cmtswitcher">
+			<a id="commenttab" class="curtab" >评论 ({{entry.commentcount}})</a>
+			<a id="readtab" class="curtab" >阅读 ({{entry.readtimes}})</a>
+				<span class="addcomment"><a href="#respond">发表评论</a></span>
+
+		<div class="fixed"></div>
+</div>
+
+    <div id="comment_area">
+    </div>
+    
+    <div id="comment_edit" style="margin-top:20px">
+
+    </div>
+
+</div>
+<script>
+  $('#comment_area').load('/do/getcomments?key={{entry.key.id}}');
+  $('#comment_edit').load('/do/getcomment_edit?key={{entry.key.id}}');
+</script>
+
+	<div id="postnavi">
+    {%for prev in entry.prev%}
+		<span class="prev"><a href="{{prev.fullurl}}">{{prev.title}}</a></span>
+    {%endfor%}
+    {%for next in entry.next%}
+		<span class="next"><a href="{{next.fullurl}}">{{next.title}}</a></span>
+    {%endfor%}
+		<div class="fixed"></div>
+	</div>
+
+	</div>
+	<!-- main END -->
+
+	
+{% include "sidebar.html" %}
+    
+	<div class="fixed"></div>
+</div>
+
+{% endblock %}

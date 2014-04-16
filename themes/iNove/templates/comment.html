@@ -1,0 +1,20 @@
+<li class="comment regularcomment" id="comment-{{comment.key.id}}">
+		<div class="author">
+			<div class="pic">
+				<img alt='' src='{{comment.gravatar_url}}' class='avatar avatar-32 photo' height='32' width='32' />			 </div>
+			<div class="name">
+            {%if comment.weburl %}
+            <a id="comment-{{comment.key.id}}" class="url" target="_blank" href="{{comment.weburl}}">{{comment.author}}</a>
+            {% else %}{{comment.author}}{%endif%}
+			</div>
+		</div>
+
+		<div class="info">
+			<div class="date">{{comment.date|datetz:"Y-m-d"}} at {{comment.date|datetz:"H:i"}}</div>
+			<div class="fixed"></div>
+			<div class="content">
+				<div id="comment-{{comment.key.id}}">{{comment.content|safe}}</div>
+			</div>
+		</div>
+		<div class="fixed"></div>
+	</li>
