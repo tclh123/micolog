@@ -504,6 +504,8 @@ class admin_entry(base.BaseRequestHandler):
                 else:
                     smsg=_('Saved ok.')
 
+                logging.error(entry.link)
+                logging.error(entry)
                 vals.update({'action':'edit','result':True,'msg':smsg%{'link':str(entry.link)},'entry':entry})
                 self.render2('views/admin/entry.html',vals)
 ##                if published and entry.allow_trackback and self.blog.allow_pingback:

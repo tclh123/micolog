@@ -64,8 +64,8 @@ libraries:
 - name: PIL
   version: "1.1.7"
   
-builtins:
-- django_wsgi: on
+#builtins:
+#- django_wsgi: on
 
 env_variables:
   DJANGO_SETTINGS_MODULE: 'settings'
