@@ -7,6 +7,6 @@
 .bzrignore
 psd
 config.py
-app.yaml
+#app.yaml
 
 /bulkloader
