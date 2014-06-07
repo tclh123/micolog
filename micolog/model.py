@@ -49,7 +49,6 @@ class BlogModel(ndb.Model):
     def get(cls,key):
         return cls.get_by_id(int(key))
 
-
     def delete(self):
         return self.key.delete()
 
@@ -392,7 +391,7 @@ class Tag(BlogModel):
             v = value.strip()
             tag = Tag.get_by_key_name(v)
             if not tag:
-                tag = Tag(key_name=v)
+                tag = Tag()
                 tag.tag = v
                 tag.slug = slugify(v)
             tag.tagcount += 1
@@ -559,8 +558,6 @@ class Entry(BlogModel):
 ##            self.postname = ""
 
 
-
-
     @property
     def fullurl(self):
         if self.link and self.link[0]!='?':
@@ -588,8 +585,6 @@ class Entry(BlogModel):
             tags = values
         else:
             tags = values.split(',')
-
-
 
         if not self.tags:
             removelist = []
