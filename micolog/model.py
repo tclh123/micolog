@@ -557,6 +557,7 @@ class Entry(BlogModel):
 ##        else:
 ##            self.postname = ""
 
+
     @property
     def fullurl(self):
         if self.link and self.link[0]!='?':
