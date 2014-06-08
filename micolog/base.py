@@ -128,7 +128,8 @@ class Pager(object):
                  sPrev=cur.reversed().to_websafe_string()
             sNext=more and cur2.to_websafe_string() or ''
 
-        links = { 'prev': sPrev, 'next': sNext, 'more': more }
+        links = {'prev': sPrev, 'next':sNext,'more':more }
+
 ##
 ##        links = {'prev': cur2.reversed().to_websafe_string(), 'next':more and cur2.to_websafe_string() or '','more':more }
 ##
