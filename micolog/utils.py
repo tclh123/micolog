@@ -69,7 +69,7 @@ def trim_excerpt(text):
 def urldecode(value):
     """Decode the url string.
     """
-    return  urllib.unquote(urllib.unquote(value)).decode('utf8')
+    return urllib.unquote(urllib.unquote(value)).decode('utf8')
 
 def urlencode(value):
     """Encode the url string.
