@@ -143,11 +143,11 @@ class SinglePost(BasePublicPage):
 
         else:
             #slug=utils.urldecode(self.request.path[1:])
+            slug=urldecode(slug)
             entries = Entry.query().filter(Entry.published == True).filter(Entry.link == slug).fetch(1)
+            
         if not entries or len(entries) == 0:
             return self.error(404)
-
-
 
         entry=entries[0]
         if entry.is_external_page:
@@ -318,14 +318,11 @@ class entriesByCategory(BasePublicPage):
             sPrev=''
             sNext=''
 
-
         slug=urldecode(slug)
 
-        cats=Category.query().filter(Category.slug ==slug).fetch(1)
+        cats=Category.query().filter(Category.slug==slug).fetch(1)
         if cats:
-
-            entries=Entry.query().filter(Entry.published == True).filter(Entry.categorie_keys ==cats[0].key)
-
+            entries=Entry.query().filter(Entry.published==True).filter(Entry.categorie_keys==cats[0].key)
 
             #entries, cursor,more = q.fetch_page(20)
             entries,links=Pager(query=entries,items_per_page=20).fetch_cursor(sNext,sPrev,-Entry.date)
