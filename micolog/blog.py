@@ -136,6 +136,7 @@ class SinglePost(BasePublicPage):
     #@request_memcache(key_prefix='single_post')
     def get(self,slug=None,postid=None):
         entries=[]
+        logging.error(slug)
         if postid:
             entry=Entry.get_by_id(long(postid))
             if entry and entry.published:
