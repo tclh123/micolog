@@ -342,7 +342,8 @@ class archive_by_month(BasePublicPage):
         except:
             sPrev=''
             sNext=''
-
+        logging.error('archive_by_month2')
+        
         firstday=datetime(int(year),int(month),1)
         if int(month)!=12:
             lastday=datetime(int(year),int(month)+1,1)
@@ -351,7 +352,8 @@ class archive_by_month(BasePublicPage):
         entries=Entry.query().filter(Entry.date>firstday,Entry.date<lastday,Entry.entrytype=='post')
         #entries=db.GqlQuery("SELECT * FROM Entry WHERE date > :1 AND date <:2 AND entrytype =:3 AND published = True ORDER BY date DESC",firstday,lastday,'post')
         entries,links=Pager(query=entries).fetch_cursor(sNext,sPrev,-Entry.date)
-
+        logging.error('archive_by_month2')
+        
         self.render('month', dict(entries=entries, year=year, month=month, pager=links))
 
 class entriesByTag(BasePublicPage):
