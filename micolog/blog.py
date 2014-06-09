@@ -136,7 +136,6 @@ class SinglePost(BasePublicPage):
     #@request_memcache(key_prefix='single_post')
     def get(self,slug=None,postid=None):
         entries=[]
-        logging.error(slug)
         if postid:
             entry=Entry.get_by_id(long(postid))
             if entry and entry.published:
@@ -144,9 +143,7 @@ class SinglePost(BasePublicPage):
 
         else:
             #slug=utils.urldecode(self.request.path[1:])
-            logging.error(slug)
-            slug=urldecode(slug)
-            logging.error(slug)
+            #slug=urldecode(slug)
             entries = Entry.query().filter(Entry.published == True).filter(Entry.link == slug).fetch(1)
             
         if not entries or len(entries) == 0:
@@ -342,7 +339,6 @@ class archive_by_month(BasePublicPage):
         except:
             sPrev=''
             sNext=''
-        logging.error('archive_by_month2')
         
         firstday=datetime(int(year),int(month),1)
         if int(month)!=12:
@@ -352,7 +348,6 @@ class archive_by_month(BasePublicPage):
         entries=Entry.query().filter(Entry.date>firstday,Entry.date<lastday,Entry.entrytype=='post')
         #entries=db.GqlQuery("SELECT * FROM Entry WHERE date > :1 AND date <:2 AND entrytype =:3 AND published = True ORDER BY date DESC",firstday,lastday,'post')
         entries,links=Pager(query=entries).fetch_cursor(sNext,sPrev,-Entry.date)
-        logging.error('archive_by_month2')
         
         self.render('month', dict(entries=entries, year=year, month=month, pager=links))
 
