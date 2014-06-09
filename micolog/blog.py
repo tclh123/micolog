@@ -143,8 +143,6 @@ class SinglePost(BasePublicPage):
 
         else:
             #slug=utils.urldecode(self.request.path[1:])
-            logging.error(slug)
-            #slug=urldecode(slug)
             entries = Entry.query().filter(Entry.published == True).filter(Entry.link == slug).fetch(1)
             
         if not entries or len(entries) == 0:
