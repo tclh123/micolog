@@ -500,17 +500,18 @@ class Post_comment(BaseRequestHandler):
                         self.write(simplejson.dumps((True,'')))
                     else:
                         comment_c=self.get_render('comment',{'comment':comment})
-                        self.write(simplejson.dumps((True,comment_c.decode('utf8')),ensure_ascii = False))
+                        self.write(simplejson.dumps((True,comment_c),ensure_ascii = False))
                 else:
                     self.redirect(self.referer+"#comment-"+str(comment.key().id()))
 
                 #comment.entry.removecache()
                 #memcache.delete("/feed/comments")
             except Exception,e:
+                logging.error(e)
                 if useajax:
-                    self.write(simplejson.dumps((False,-103,_('Comment not allowed.')+unicode(e))))
+                    self.write(simplejson.dumps((False,-103,_('Comment not allowed.'))))
                 else:
-                    self.error(-102,_('Comment not allowed .'+str(e)))
+                    self.error(-102,_('Comment not allowed .'))
 
 ##class Post_comment(BaseRequestHandler):
 ##    #@printinfo
