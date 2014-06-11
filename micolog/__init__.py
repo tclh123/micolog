@@ -64,7 +64,8 @@ micolog_app = webapp2.WSGIApplication(
 
                 webapp2.Route('/do/<slug:\w+>', blog.do_action),
                 #('/e/(.*)',blog.Other),
-                ('/([\\w\\-\\./%\x80-\xFF]+)', blog.SinglePost),
+                #('/([\\w\\-\\./%\x80-\xFF]+)', blog.SinglePost),
+                ('/(.+)', blog.SinglePost),
                 ('.*',blog.Error404)
             ],debug=True)
 
