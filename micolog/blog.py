@@ -161,7 +161,7 @@ class SinglePost(BasePublicPage):
 
         #@request_memcache(key_prefix='single_post',entry_id=entry.vkey)
         def render_single(self):
-            loginurl=users.create_login_url(entry.fullurl+(self.isPhone() and "" or "#comment_area"))
+            loginurl=users.create_login_url(entry.fullurl.encode('utf8')+(self.isPhone() and "" or "#comment_area"))
             if entry.entrytype=='post':
                 self.render('single',
                             dict(entry=entry,loginurl=loginurl))
@@ -711,9 +711,9 @@ class do_action(BasePublicPage):
         useajax=self.paramint('useajax',1)
 
         entry=Entry.get(key)
-        #loginurl=users.create_login_url(entry.fullurl+(self.isPhone() and "" or "#comment_area"))
+        #loginurl=users.create_login_url(entry.fullurl.encode('utf8')+(self.isPhone() and "" or "#comment_area"))
 
-        loginurl=users.create_login_url(entry.fullurl)
+        loginurl=users.create_login_url(entry.fullurl.encode('utf8'))
 
         vals=dict(loginurl=loginurl,useajax=useajax,entry=entry,is_login=self.is_login,key=key)
         self.render('comment_edit',vals)
