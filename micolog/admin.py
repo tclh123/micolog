@@ -455,8 +455,8 @@ class admin_entry(base.BaseRequestHandler):
         vals={'action':action,'postback':True,'cats':Category.query(),'entrytype':slug,
               'cats':map(mapit,Category.query()),
               'entry':{ 'title':title,'content':content,'strtags':tags,'key':key,'published':published,
-                         'allow_comment':allow_comment,
-                         'allow_trackback':allow_trackback,
+                        'allow_comment':allow_comment,
+                        'allow_trackback':allow_trackback,
                         'slug':entry_slug,
                         'entry_parent':entry_parent,
                         'excerpt':entry_excerpt,
@@ -504,7 +504,7 @@ class admin_entry(base.BaseRequestHandler):
                 else:
                     smsg=_('Saved ok.')
 
-                vals.update({'action':'edit','result':True,'msg':smsg%{'link':str(utils.urlencode(entry.link))},'entry':entry})
+                vals.update({'action':'edit','result':True,'msg':smsg%{'link':entry.link},'entry':entry})
                 self.render2('views/admin/entry.html',vals)
 ##                if published and entry.allow_trackback and self.blog.allow_pingback:
 ##                    try:
@@ -546,7 +546,7 @@ class admin_entry(base.BaseRequestHandler):
                         smsg=_('Saved ok. <a href="/%(link)s" target="_blank">View it now!</a>')
                     else:
                         smsg=_('Saved ok.')
-                    vals.update({'result':True,'msg':smsg%{'link':str(utils.urlencode(entry.link))},'entry':entry})
+                    vals.update({'result':True,'msg':smsg%{'link':entry.link},'entry':entry})
 
                     self.render2('views/admin/entry.html',vals)
 ##                    if published and entry.allow_trackback and self.blog.allow_pingback:
