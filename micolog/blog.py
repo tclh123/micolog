@@ -449,12 +449,14 @@ class Post_comment(BaseRequestHandler):
         #            self.error(-102,_('You must login before comment .'))
         #    return
 
-        #name=self.login_user.nickname()
-        #email=self.login_user.email()
-        name=self.param('author')
-        email=self.param('email')
+        if self.is_login:
+            name=self.login_user.nickname()
+            email=self.login_user.email()
+        else:
+            name=self.param('author')
+            email=self.param('email')
+        
         url=self.param('url')
-
         key=self.param('key')
         content=self.param('comment')
         parent_id=self.paramint('parentid',0)
