@@ -451,14 +451,14 @@ class Post_comment(BaseRequestHandler):
         check_ret = True
         try:            
             if self.blog.comment_check_type == 1:
-                checkret = self.param('checkret')
-                code = sess.pop('code')
+                checkret = self.param('checkret')                
+                code = 'code' in sess and sess.pop('code') or None
                 check_ret = (code and int(checkret) == code)
                 logging.info(checkret)
                 logging.info(code)
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
-                icode = sess.pop('icode')
+                icode = 'icode' in sess and sess.pop('icode') or None
                 check_ret = (icode and int(checkret) == icode)
                 logging.info(checkret)
                 logging.info(icode)
@@ -469,7 +469,7 @@ class Post_comment(BaseRequestHandler):
                 check_ret = eval(checknum)==int(gb.stringQ2B(checkret))
 
         except Exception,e:
-            logging.error(e.msg)
+            logging.error(e)
             check_ret = False
             
         #sess.invalidate()
