@@ -471,6 +471,7 @@ class Post_comment(BaseRequestHandler):
         except Exception,e:
             check_ret = False
 
+            
         #sess.invalidate()
         return check_ret
 
