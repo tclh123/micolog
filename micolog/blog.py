@@ -438,6 +438,30 @@ class Error404(BaseRequestHandler):
         self.error(404)
 
 class Post_comment(BaseRequestHandler):
+
+    def verify_checkcode(self):
+        sess=Session(self,timeout=180)
+        #if not (self.request.cookies.get('comment_user', '')):
+        check_ret = True
+        try:            
+            if self.blog.comment_check_type == 1:
+                checkret = self.param('checkret')
+                check_ret = (int(checkret) == sess['code'])
+            elif self.blog.comment_check_type == 2:
+                checkret = self.param('checkret')
+                check_ret = (int(checkret) == sess['icode'])
+            elif  self.blog.comment_check_type == 3:
+                import app.gbtools as gb
+                checknum = self.param('checknum')
+                checkret = self.param('checkret')
+                check_ret = eval(checknum)==int(gb.stringQ2B(checkret))
+
+        except Exception,e:
+            check_ret = False
+
+        sess.invalidate()
+        return check_ret
+
     #@printinfo
     def post(self,slug=None):
         useajax=self.param('useajax')=='1'
@@ -461,6 +485,14 @@ class Post_comment(BaseRequestHandler):
         content=self.param('comment')
         parent_id=self.paramint('parentid',0)
         reply_notify_mail=self.parambool('reply_notify_mail')
+        
+        check_ret = self.verify_checkcode()
+        if not check_ret:
+            if useajax:
+                self.write(simplejson.dumps((False,-102,_('Your check code is invalid .')),ensure_ascii = False))
+            else:
+                self.error(-102,_('Your check code is invalid .'))
+            return
 
         content=content.replace('\n','<br />')
         content=filter.do_filter(content)

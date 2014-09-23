@@ -134,16 +134,14 @@ class Blog(ndb.Model):
 
     default_theme = Theme("default")
 
-
     #remove it
     #allow_pingback = ndb.BooleanProperty(default=False)
     #allow_trackback = ndb.BooleanProperty(default=False)
 
-
-
+    
     @property
-    def theme (self):
-       return  self.get_theme()
+    def theme(self):
+       return self.get_theme()
 
     langs = None
     application = None
@@ -156,7 +154,6 @@ class Blog(ndb.Model):
             memcache.set('blog_'+keyname,blog)
         return blog
 
-
     @property
     def baseurl(self):
         return "http://"+self.domain
@@ -167,14 +164,12 @@ class Blog(ndb.Model):
         self.domain=os.environ['HTTP_HOST']
         self.feedurl=self.baseurl+"/feed"
 
-
         if os.environ.has_key('HTTP_ACCEPT_LANGUAGE'):
             lang=os.environ['HTTP_ACCEPT_LANGUAGE'].split(',')[0]
         else:
             lang='zh-CN'
         from django.utils.translation import  to_locale
         self.language=to_locale(lang)
-
 
         self.put_async()
 
@@ -188,7 +183,6 @@ class Blog(ndb.Model):
         link=Link()
         link.populate(href='http://eric.cloud-mes.com/',linktext="Eric Guo's blog".decode('utf8'))
         link.put_async()
-
 
     @property
     def plugins(self):
@@ -208,7 +202,6 @@ class Blog(ndb.Model):
 
     def get_ziplist(self):
         return self.plugins.get_ziplist();
-
 
     def initialsetup(self):
         self.title = 'Your Blog Title'
