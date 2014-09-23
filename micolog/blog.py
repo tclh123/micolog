@@ -452,16 +452,12 @@ class Post_comment(BaseRequestHandler):
         try:            
             if self.blog.comment_check_type == 1:
                 checkret = self.param('checkret')                
-                code = 'code' in sess and sess.pop('code') or None
-                check_ret = (code and int(checkret) == code)
-                logging.info(checkret)
-                logging.info(code)
+                code = sess.get('code')
+                check_ret = (code is not None and int(checkret) == code)
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
-                icode = 'icode' in sess and sess.pop('icode') or None
-                check_ret = (icode and int(checkret) == icode)
-                logging.info(checkret)
-                logging.info(icode)
+                icode = sess.get('icode')
+                check_ret = (icode is not None and int(checkret) == int(icode))
             elif  self.blog.comment_check_type == 3:
                 import app.gbtools as gb
                 checknum = self.param('checknum')
