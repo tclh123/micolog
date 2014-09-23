@@ -8,7 +8,7 @@ import traceback
 from mimetypes import types_map
 from datetime import datetime
 
-import webapp2 as webapp
+import webapp2
 from webapp2_extras import sessions
 
 from google.appengine.api import users
@@ -183,14 +183,14 @@ class LangIterator:
 
 
 
-class BaseRequestHandler(webapp.RequestHandler):
+class BaseRequestHandler(webapp2.RequestHandler):
 ##	def head(self, *args):
 ##		return self.get(*args)
 
     def initialize(self, request, response):
         self.current='home'
 
-        webapp.RequestHandler.initialize(self, request, response)
+        webapp2.RequestHandler.initialize(self, request, response)
         if  hasattr(self,'setup'):
             self.setup()
 
