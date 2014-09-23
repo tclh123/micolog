@@ -452,13 +452,15 @@ class Post_comment(BaseRequestHandler):
         try:            
             if self.blog.comment_check_type == 1:
                 checkret = self.param('checkret')
-                check_ret = (int(checkret) == sess['code'])
+                code = sess.get('code')
+                check_ret = (code and int(checkret) == code)
                 del sess['code']
                 logging.info(checkret)
                 logging.info(sess['code'])
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
-                check_ret = (int(checkret) == sess['icode'])
+                icode = sess.get('icode')
+                check_ret = (icode and int(checkret) == icode)
                 del sess['icode']
                 logging.info(checkret)
                 logging.info(sess['icode'])
