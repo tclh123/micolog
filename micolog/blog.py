@@ -469,6 +469,7 @@ class Post_comment(BaseRequestHandler):
                 check_ret = eval(checknum)==int(gb.stringQ2B(checkret))
 
         except Exception,e:
+            logging.error(e)
             check_ret = False
 
             
