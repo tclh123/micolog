@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
-import os,logging,re
+import os
+import logging
+import re
 import functools
-import webapp2 as webapp
-from google.appengine.api import users
-import template as micolog_template
-from google.appengine.api import memcache
-##import app.webapp as webapp2
-from django.template import TemplateDoesNotExist
-import settings
-from google.appengine.api import taskqueue
-from mimetypes import types_map
-from datetime import datetime
 import urllib
 import traceback
+from mimetypes import types_map
+from datetime import datetime
+
+import webapp2 as webapp
+from webapp2_extras import sessions
+
+from google.appengine.api import users
+from google.appengine.api import memcache
+from google.appengine.api import taskqueue
+from django.template import TemplateDoesNotExist
+
+import settings
+import template as micolog_template
+
+
+
 def requires_admin(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -336,3 +344,19 @@ class BaseRequestHandler(webapp.RequestHandler):
             return True
         else:
             return False
+
+    def dispatch(self):
+        # Get a session store for this request.
+        self.session_store = sessions.get_store(request=self.request)
+
+        try:
+            # Dispatch the request.
+            webapp2.RequestHandler.dispatch(self)
+        finally:
+            # Save all sessions.
+            self.session_store.save_sessions(self.response)
+
+    @webapp2.cached_property
+    def session(self):
+        # Returns a session using the default cookie key.
+        return self.session_store.get_session()

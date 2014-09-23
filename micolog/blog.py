@@ -443,9 +443,7 @@ class Error404(BaseRequestHandler):
 class Post_comment(BaseRequestHandler):
 
     def verify_checkcode(self):
-        # Get a session store.
-        self.session_store = sessions.get_store()
-        sess = self.session_store.get_session()
+        sess = self.session
         #sess=Session(self,timeout=180)
         #if not (self.request.cookies.get('comment_user', '')):
         check_ret = True
@@ -861,26 +859,20 @@ class CheckImg(BaseRequestHandler):
         code_img.save(buf,'JPEG',quality=70)          
         imgdata = buf.getvalue()
         
-        # Get a session store.
-        self.session_store = sessions.get_store()
-        sess = self.session_store.get_session()
-        
+        sess = self.session        
         #sess=Session(self,timeout=900)
         #if not sess.is_new():
             #sess.invalidate()
             #sess=Session(self,timeout=900)
         sess['icode'] = strs
         #sess.save()
-        #self.session_store.save_session(self.response)
         
         self.response.headers['Content-Type'] = "image/jpeg"
         self.response.out.write(imgdata)
 
 class CheckCode(BaseRequestHandler):
     def get(self):
-        # Get a session store.
-        self.session_store = sessions.get_store()
-        sess = self.session_store.get_session()
+        sess = self.session
         #sess=Session(self,timeout=900)
         num1=random.randint(30,50)
         num2=random.randint(1,10)
