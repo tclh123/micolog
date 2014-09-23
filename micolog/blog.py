@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import cgi, os,logging
+import cgi
+import os
+import logging
 
 import wsgiref.handlers
 
@@ -25,6 +27,7 @@ from django.utils.translation import ugettext as _
 ##activate(self.blog.language)
 from google.appengine.ext import zipserve
 from google.appengine.datastore import datastore_query
+from webapp2_extras import sessions
 import utils,filter
 
 def doRequestHandle(old_handler,new_handler,**args):
@@ -440,16 +443,23 @@ class Error404(BaseRequestHandler):
 class Post_comment(BaseRequestHandler):
 
     def verify_checkcode(self):
-        sess=Session(self,timeout=180)
+        # Get a session store.
+        self.session_store = sessions.get_store()
+        sess = self.session_store.get_session()
+        #sess=Session(self,timeout=180)
         #if not (self.request.cookies.get('comment_user', '')):
         check_ret = True
         try:            
             if self.blog.comment_check_type == 1:
                 checkret = self.param('checkret')
                 check_ret = (int(checkret) == sess['code'])
+                logging.info(checkret)
+                logging.info(sess['code'])
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
                 check_ret = (int(checkret) == sess['icode'])
+                logging.info(checkret)
+                logging.info(sess['icode'])
             elif  self.blog.comment_check_type == 3:
                 import app.gbtools as gb
                 checknum = self.param('checknum')
@@ -486,13 +496,15 @@ class Post_comment(BaseRequestHandler):
         parent_id=self.paramint('parentid',0)
         reply_notify_mail=self.parambool('reply_notify_mail')
         
-        check_ret = self.verify_checkcode()
-        if not check_ret:
-            if useajax:
-                self.write(simplejson.dumps((False,-102,_('Your check code is invalid .')),ensure_ascii = False))
-            else:
-                self.error(-102,_('Your check code is invalid .'))
-            return
+        # Verify the captcha (copied from the old source code)
+        if not self.is_login:
+            check_ret = self.verify_checkcode()
+            if not check_ret:
+                if useajax:
+                    self.write(simplejson.dumps((False,-102,_('Your check code is invalid .')),ensure_ascii = False))
+                else:
+                    self.error(-102,_('Your check code is invalid .'))
+                return
 
         content=content.replace('\n','<br />')
         content=filter.do_filter(content)
@@ -846,24 +858,32 @@ class CheckImg(BaseRequestHandler):
         code_img.save(buf,'JPEG',quality=70)          
         imgdata = buf.getvalue()
         
-        sess=Session(self,timeout=900)
-        if not sess.is_new():
-            sess.invalidate()
-            sess=Session(self,timeout=900)
-        sess['icode']=strs
-        sess.save()
+        # Get a session store.
+        self.session_store = sessions.get_store()
+        sess = self.session_store.get_session()
+        
+        #sess=Session(self,timeout=900)
+        #if not sess.is_new():
+            #sess.invalidate()
+            #sess=Session(self,timeout=900)
+        sess['icode'] = strs
+        #sess.save()
+        #self.session_store.save_session(self.response)
         
         self.response.headers['Content-Type'] = "image/jpeg"
         self.response.out.write(imgdata)
 
 class CheckCode(BaseRequestHandler):
     def get(self):
-        sess=Session(self,timeout=900)
+        # Get a session store.
+        self.session_store = sessions.get_store()
+        sess = self.session_store.get_session()
+        #sess=Session(self,timeout=900)
         num1=random.randint(30,50)
         num2=random.randint(1,10)
         code="<span style='font-size:12px;color:red'>%d - %d =</span>"%(num1,num2)
         sess['code']=num1-num2
-        sess.save()
+        #sess.save()
         #self.response.headers['Content-Type'] = "text/html"
         self.response.out.write(code)
 

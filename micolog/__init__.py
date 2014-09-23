@@ -8,6 +8,11 @@ from webapp2_extras import routes
 import blog,theme,admin,cache
 from google.appengine.ext import zipserve
 
+myconfig_dict = {}
+myconfig_dict['webapp2_extras.sessions'] = {
+    'secret_key': 'my-super-secret-key-renaissance',
+}
+
 admin_app=webapp2.WSGIApplication(
             [
                 ('/admin/{0,1}',admin.admin_main),
@@ -37,7 +42,7 @@ admin_app=webapp2.WSGIApplication(
                 ('/admin/uploadex', admin.UploadEx),
 
                 ('.*',admin.Error404)
-            ],debug=True)
+            ], debug=True, config=myconfig_dict)
 
 
 micolog_app = webapp2.WSGIApplication(
@@ -67,7 +72,7 @@ micolog_app = webapp2.WSGIApplication(
                 #('/([\\w\\-\\./%\x80-\xFF]+)', blog.SinglePost),
                 ('/(.+)', blog.SinglePost),
                 ('.*',blog.Error404)
-            ],debug=True)
+            ], debug=True, config=myconfig_dict)
 
 
 
@@ -78,9 +83,9 @@ def main():
     from model import Blog
     g_blog=Blog.getBlog()
     if not g_blog:
-            g_blog=Blog(id='default')
-            g_blog.put()
-            g_blog.InitBlogData()
+        g_blog=Blog(id='default')
+        g_blog.put()
+        g_blog.InitBlogData()
 
     g_blog.application=micolog_app
     g_blog.plugins.register_handlerlist(micolog_app)
