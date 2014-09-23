@@ -453,11 +453,13 @@ class Post_comment(BaseRequestHandler):
             if self.blog.comment_check_type == 1:
                 checkret = self.param('checkret')
                 check_ret = (int(checkret) == sess['code'])
+                del sess['code']
                 logging.info(checkret)
                 logging.info(sess['code'])
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
                 check_ret = (int(checkret) == sess['icode'])
+                del sess['icode']
                 logging.info(checkret)
                 logging.info(sess['icode'])
             elif  self.blog.comment_check_type == 3:
@@ -469,7 +471,7 @@ class Post_comment(BaseRequestHandler):
         except Exception,e:
             check_ret = False
 
-        sess.invalidate()
+        #sess.invalidate()
         return check_ret
 
     #@printinfo
