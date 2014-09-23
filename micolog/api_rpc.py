@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-import cgi,os,sys
+import cgi
+import os
+import sys
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from google.appengine.dist import use_library
 use_library('django', '1.2')
+
 import wsgiref.handlers
 import xmlrpclib
 from xmlrpclib import Fault
@@ -981,8 +985,7 @@ class DeleteLog(BaseRequestHandler):
 #}}}
 
 def main():
-    #webapp.template.register_template_library("filter")
-    application = webapp.WSGIApplication(
+    application = webapp2.WSGIApplication(
             [
                 ('/rpc', CallApi),
                 ('/xmlrpc\.php',CallApi),

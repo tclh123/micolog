@@ -2,6 +2,9 @@
 import cgi
 import os
 import logging
+import utils
+
+import filter
 
 import wsgiref.handlers
 
@@ -27,8 +30,7 @@ from django.utils.translation import ugettext as _
 ##activate(self.blog.language)
 from google.appengine.ext import zipserve
 from google.appengine.datastore import datastore_query
-from webapp2_extras import sessions
-import utils,filter
+
 
 def doRequestHandle(old_handler,new_handler,**args):
         new_handler.initialize(old_handler.request,old_handler.response)
@@ -823,7 +825,7 @@ class do_action(BasePublicPage):
         ObjCache.flush_all()
 
 
-class getMedia(webapp.RequestHandler):
+class getMedia(webapp2.RequestHandler):
     def get(self,slug):
         media=Media.get(slug)
         if media:
