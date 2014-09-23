@@ -452,18 +452,16 @@ class Post_comment(BaseRequestHandler):
         try:            
             if self.blog.comment_check_type == 1:
                 checkret = self.param('checkret')
-                code = sess.get('code')
+                code = sess.pop('code')
                 check_ret = (code and int(checkret) == code)
-                del sess['code']
                 logging.info(checkret)
-                logging.info(sess['code'])
+                logging.info(code)
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
-                icode = sess.get('icode')
+                icode = sess.pop('icode')
                 check_ret = (icode and int(checkret) == icode)
-                del sess['icode']
                 logging.info(checkret)
-                logging.info(sess['icode'])
+                logging.info(icode)
             elif  self.blog.comment_check_type == 3:
                 import app.gbtools as gb
                 checknum = self.param('checknum')
@@ -471,9 +469,8 @@ class Post_comment(BaseRequestHandler):
                 check_ret = eval(checknum)==int(gb.stringQ2B(checkret))
 
         except Exception,e:
-            logging.error(e)
+            logging.error(e.msg)
             check_ret = False
-
             
         #sess.invalidate()
         return check_ret
