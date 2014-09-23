@@ -78,7 +78,7 @@ def Error404(handler):
     handler.response.out.write(html)
 
 
-class GetFile(webapp2.RequestHandler):
+class GetFile(webapp.RequestHandler):
     def get(self,prefix,name):
         request_path = self.request.path[8:]
 
@@ -124,7 +124,7 @@ class GetFile(webapp2.RequestHandler):
         else:
             Error404(self)
 
-class NotFound(webapp2.RequestHandler):
+class NotFound(webapp.RequestHandler):
     def get(self):
          Error404(self)
 
@@ -157,7 +157,7 @@ def cache_expires(response, seconds=0, **kw):
         response.headers['Expires'] = format_date(datetime.utcnow() + timedelta(seconds=seconds))
 
 def main():
-    application = webapp2.WSGIApplication(
+    application = webapp.WSGIApplication(
             [
                 ('/themes/[\\w\\-]+/templates/.*', NotFound),
                 ('/themes/(?P<prefix>[\\w\\-]+)/(?P<name>.+)', GetFile),
