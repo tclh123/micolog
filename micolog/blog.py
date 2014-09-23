@@ -451,13 +451,15 @@ class Post_comment(BaseRequestHandler):
         check_ret = True
         try:            
             if self.blog.comment_check_type == 1:
-                checkret = self.param('checkret')                
-                code = sess.get('code')
-                check_ret = (code is not None and int(checkret) == code)
+                checkret = self.param('checkret')
+                # 客户端会自动请求刷新验证码
+                code = sess.pop('code')
+                check_ret = (int(checkret) == code)
             elif self.blog.comment_check_type == 2:
                 checkret = self.param('checkret')
-                icode = sess.get('icode')
-                check_ret = (icode is not None and int(checkret) == int(icode))
+                # 客户端会自动请求刷新验证码
+                icode = sess.pop('icode')
+                check_ret = (int(checkret) == int(icode))
             elif  self.blog.comment_check_type == 3:
                 import app.gbtools as gb
                 checknum = self.param('checknum')

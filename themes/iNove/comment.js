@@ -89,6 +89,7 @@ if (str.charAt(0)=="." || str.charAt(0)=="@" || str.indexOf('@', 0)==-1|| str.in
                  $('#checkret').focus();
 
               }
+            reloadCheckImage();
             }
         });
     }
