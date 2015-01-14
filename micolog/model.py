@@ -47,8 +47,8 @@ class BlogModel(ndb.Model):
 
     @classmethod
     def get(cls,key):
-        return cls.get_by_id(int(key))
-
+        return cls.get_by_id(key)
+        
     def delete(self):
         return self.key.delete()
 
