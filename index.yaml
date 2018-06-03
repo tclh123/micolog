@@ -251,6 +251,15 @@ indexes:
   - name: post_id
     direction: desc
 
+- kind: Entry
+  properties:
+  - name: entrytype
+  - name: published
+  - name: sticky
+    direction: desc
+  - name: date
+    direction: desc
+
 - kind: Media
   properties:
   - name: mtype
